@@ -50,7 +50,7 @@ Rsk <- R6Class("Rsk",
     self$file_name <- file_name
 
     # get data base tables
-    db <- dbConnect(SQLite(), x)
+    db <- dbConnect(SQLite(), file_name)
     # dbListTables(db)
     self$blob         <- setDT(dbGetQuery(db, "SELECT * FROM downloads"))
     self$coefficients <- setDT(dbGetQuery(db, "SELECT calibrationID, key, cast(value as REAL) as value FROM coefficients"))
@@ -206,7 +206,7 @@ Rsk <- R6Class("Rsk",
   },
 
   glance = function() {
-    if(self$obs < 1e5){
+    if(self$n_obs < 1e5){
       print(plot_ly(self$data,
                     x = ~datetime,
                     y = ~value,
@@ -215,7 +215,7 @@ Rsk <- R6Class("Rsk",
                     mode = 'lines'))
     } else {
 
-      data_sub <-  z$data[as.integer(seq.int(1, .N, length.out = 50000))]
+      data_sub <-  self$data[as.integer(seq.int(1, .N, length.out = 50000))]
       data_sub <- melt(data_sub, id.vars = 'datetime')
 
       print(plot_ly(data_sub,

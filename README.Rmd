@@ -1,0 +1,63 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# rsk
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of rsk is to facilitate reading of pressure and temperature RBR files.
+
+Steps:
+1) read SQLite3 database tables (*.rsk)
+1) check date times
+1) convert binary data (*downloads* table) to millivolt 
+1) apply basic calibration parameters
+1) apply temperature compensation for pressure
+
+
+## Installation
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("jkennel/rsk")
+```
+
+## Example
+
+
+```{r example}
+
+library(rsk)
+fn  <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
+
+# this reads in the data
+rbr <- Rsk$new(file_name = fn)
+
+# the data is stored in a single dataset in wide format
+# raw refers to the raw data
+# for newer duets temperature is measured onboard and at the sensor tip
+# pressure_dbar_comp refers to the final temperature compensated values.
+rbr$data
+
+
+# generate a simple plot
+rbr$glance()
+
+
+
+```
