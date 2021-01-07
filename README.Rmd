@@ -47,7 +47,7 @@ library(rsk)
 fn  <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
 
 # this reads in the data
-rbr <- Rsk$new(file_name = fn)
+system.time(rbr <- Rsk$new(file_name = fn))
 ```
 
 

@@ -36,13 +36,15 @@ library(rsk)
 fn  <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
 
 # this reads in the data
-rbr <- Rsk$new(file_name = fn)
+system.time(rbr <- Rsk$new(file_name = fn))
+#>    user  system elapsed 
+#>   2.528   1.006   2.561
 ```
 
 ## Data
 
-The data is stored in a single dataset in wide format. *raw* refers to
-the millivolt measurements. For newer duets, temperature is measured
+The data is stored in a single *data.table* in wide format. *raw* refers
+to the millivolt measurements. For newer duets, temperature is measured
 onboard and at the sensor tip. *pressure\_dbar\_comp* refers to the
 final temperature compensated pressure.
 

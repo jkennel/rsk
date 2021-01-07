@@ -52,6 +52,7 @@ Rsk <- R6Class("Rsk",
     # get data base tables
     db <- dbConnect(SQLite(), file_name)
     # dbListTables(db)
+
     self$blob         <- setDT(dbGetQuery(db, "SELECT * FROM downloads"))
     self$coefficients <- setDT(dbGetQuery(db, "SELECT calibrationID, key, cast(value as REAL) as value FROM coefficients"))
     self$channels     <- setDT(dbGetQuery(db, "SELECT * FROM channels"))
@@ -240,28 +241,4 @@ Rsk <- R6Class("Rsk",
 
 
 
-
-
-
-
-
-
-# library(rsk)
-# library(R6)
-# library(data.table)
-# library(RSQLite)
-#
-# x <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
-# x <- '/home/jonathankennel/Storage/data/rbr/rd130 077623_20191119_1500.rsk'
-# x <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
-# system.time(z <- Rsk$new(x))
-# system.time(z <- Rsk$new(x)$data)
-# system.time(zz <- transducer::read_rbr(x)$data[[1]])
-# profvis::profvis(z <- Rsk$new(x))
-# zz <- z$data
-#
-# plot(V2~datetime, zz[40:2000], type='l')
-# points(V6~datetime, zz[40:2000], type='l', col = 'red')
-# # str(z$base_coefficients(id = 1))
-# # str(z$comp_coefficients(id = 2))
 
