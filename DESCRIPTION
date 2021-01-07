@@ -1,0 +1,29 @@
+Package: rsk
+Type: Package
+Title: Read rsk files
+Version: 0.0.1
+Date: 2021-01-07
+Authors@R: c(person("Jonathan", "Kennel", email = "jkennel@uoguelph.ca", role = c("aut", "cre", "trl")), 
+             person("Beth", "Parker", email = "bparker@uoguelph.ca", role = "ths"))
+Maintainer: Jonathan Kennel<jkennel@uoguelph.ca>
+Description: Reads *.rsk files. This is the filetype for RBR data loggers.
+  Currently this is limited to pressure and temperature sensors.
+URL: https://github.com/jkennel/rsk
+License: GPL-3
+Imports: 
+  Rcpp (>= 1.0.5), 
+  data.table,
+  RSQLite,
+  plotly,
+  R6
+LinkingTo: Rcpp, 
+           RcppArmadillo
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
+Encoding: UTF-8
+LazyData: TRUE
+NeedsCompilation: yes
+SystemRequirements: C++11
+Suggests: 
+    knitr,
+    rmarkdown
