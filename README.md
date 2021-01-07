@@ -10,9 +10,13 @@
 The goal of rsk is to facilitate reading of pressure and temperature RBR
 files. This package is in the beginning of development stages.
 
-Steps: 1) read SQLite3 database tables (*.rsk) 1) check date times 1)
-convert binary data (*downloads\* table) to millivolt 1) apply basic
-calibration parameters 1) apply temperature compensation for pressure
+Steps:
+
+1.  read SQLite3 database tables (\*.rsk)
+2.  check date times
+3.  convert binary data (*downloads* table) to millivolt
+4.  apply basic calibration parameters
+5.  apply temperature compensation for pressure
 
 ## Installation
 
@@ -37,7 +41,7 @@ rbr <- Rsk$new(file_name = fn)
 ## Data
 
 The data is stored in a single dataset in wide format. *raw* refers to
-the millivolt measurements. For newer duets temperature is measured
+the millivolt measurements. For newer duets, temperature is measured
 onboard and at the sensor tip. *pressure\_dbar\_comp* refers to the
 final temperature compensated pressure.
 
