@@ -7,8 +7,9 @@
 
 <!-- badges: end -->
 
-The goal of rsk is to facilitate reading of pressure and temperature RBR
-files. This package is in the beginning of development stages.
+The goal of rsk is to facilitate fast reading of pressure and
+temperature RBR files. This package is in the beginning of development
+stages.
 
 Steps:
 

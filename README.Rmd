@@ -52,7 +52,7 @@ rbr <- Rsk$new(file_name = fn)
 
 
 ##  Data
-The data is stored in a single dataset in wide format. *raw* refers to the millivolt measurements. For newer duets, temperature is measured onboard and at the sensor tip. *pressure_dbar_comp* refers to the final temperature compensated pressure.
+The data is stored in a single *data.table* in wide format. *raw* refers to the millivolt measurements. For newer duets, temperature is measured onboard and at the sensor tip. *pressure_dbar_comp* refers to the final temperature compensated pressure.
 
 ```{r}
 rbr$data
