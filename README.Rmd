@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of rsk is to facilitate reading of pressure and temperature RBR files.
+The goal of rsk is to facilitate reading of pressure and temperature RBR files. This package is in the beginning of development stages.
 
 Steps:
 1) read SQLite3 database tables (*.rsk)
@@ -40,24 +40,27 @@ devtools::install_github("jkennel/rsk")
 ## Example
 
 
-```{r example}
+```{r}
 
 library(rsk)
 fn  <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
 
 # this reads in the data
 rbr <- Rsk$new(file_name = fn)
-
-# the data is stored in a single dataset in wide format
-# raw refers to the raw data
-# for newer duets temperature is measured onboard and at the sensor tip
-# pressure_dbar_comp refers to the final temperature compensated values.
-rbr$data
-
-
-# generate a simple plot
-rbr$glance()
-
-
-
 ```
+
+
+##  Data
+The data is stored in a single dataset in wide format. *raw* refers to the millivolt measurements. For newer duets temperature is measured onboard and at the sensor tip. *pressure_dbar_comp* refers to the final temperature compensated pressure.
+
+```{r}
+rbr$data
+```
+
+
+##  Plot of channels
+
+```{r, eval = FALSE}
+rbr$glance()
+```
+

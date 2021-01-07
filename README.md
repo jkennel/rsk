@@ -8,7 +8,7 @@
 <!-- badges: end -->
 
 The goal of rsk is to facilitate reading of pressure and temperature RBR
-files.
+files. This package is in the beginning of development stages.
 
 Steps: 1) read SQLite3 database tables (*.rsk) 1) check date times 1)
 convert binary data (*downloads\* table) to millivolt 1) apply basic
@@ -32,11 +32,16 @@ fn  <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
 
 # this reads in the data
 rbr <- Rsk$new(file_name = fn)
+```
 
-# the data is stored in a single dataset in wide format
-# raw refers to the raw data
-# for newer duets temperature is measured onboard and at the sensor tip
-# pressure_dbar_comp refers to the final temperature compensated values.
+## Data
+
+The data is stored in a single dataset in wide format. *raw* refers to
+the millivolt measurements. For newer duets temperature is measured
+onboard and at the sensor tip. *pressure\_dbar\_comp* refers to the
+final temperature compensated pressure.
+
+``` r
 rbr$data
 #>                      datetime temperature_raw temperature pressure_raw pressure
 #>        1: 2019-07-10 22:58:05       0.3053592    29.50085   0.05286860 9.553530
@@ -62,13 +67,10 @@ rbr$data
 #> 11297714:               0.5185547            20.25231           9.495810
 #> 11297715:               0.5187988            20.22907           9.496685
 #> 11297716:               0.5185547            20.25231           9.490568
+```
 
+## Plot of channels
 
-# generate a simple plot
+``` r
 rbr$glance()
-#> Warning: `arrange_()` is deprecated as of dplyr 0.7.0.
-#> Please use `arrange()` instead.
-#> See vignette('programming') for more help
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_warnings()` to see where this warning was generated.
 ```
