@@ -1,0 +1,9 @@
+channel_name, field_name, parameter, units, type
+pres03, pressure, pressure, dbar, primary
+pres21, pressure, pressure, dbar, primary
+pres24, pressure, pressure, dbar, primary
+pres25, pressure, pressure, dbar, primary
+pres26, pressure, pressure, dbar, primary
+temp02, temperature, temperature, degrees_c, primary
+temp05, temperature_onboard, temperature, degrees_c, compensation
+temp12, temperature, temperature, degrees_c, primary

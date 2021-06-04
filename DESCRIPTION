@@ -14,7 +14,10 @@ Imports:
   Rcpp (>= 1.0.5), 
   data.table,
   RSQLite,
+  duckdb,
   plotly,
+  fst,
+  DBI,
   R6
 LinkingTo: Rcpp, 
            RcppArmadillo
