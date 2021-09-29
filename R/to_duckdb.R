@@ -1,7 +1,7 @@
 #===============================================================================
 #' @title to_duckdb
 #'
-#' @description convert .rsk to .duckdb database
+#' @description convert .rsk to .duckdb database.
 #'
 #' @author Jonathan Kennel \email{jkennel@uoguelph.ca}
 #'
