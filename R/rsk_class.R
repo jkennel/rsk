@@ -81,14 +81,14 @@ Rsk <- R6Class("Rsk",
 
     self$file_name <- file_name
 
-
     # cannot keep raw data if you aren't going from the binary table
     if(!raw) {
       keep_raw <- FALSE
     }
 
+
     # get data base tables
-    if(file_ext(file_name) == 'rsk') {
+    if(tools::file_ext(file_name) == 'rsk') {
       db        <- dbConnect(SQLite(), file_name)
       self$db_tables    <- RSQLite::dbListTables(db)
       if('downloads' %in% self$db_tables) {
@@ -105,7 +105,7 @@ Rsk <- R6Class("Rsk",
           return(self)
         }
       }
-    } else if(file_ext(file_name) == 'duckdb') {
+    } else if(tools::file_ext(file_name) == 'duckdb') {
       if(raw) {
         stop('raw cannot be TRUE if file is type .duckdb')
       }
@@ -124,7 +124,13 @@ Rsk <- R6Class("Rsk",
       nms <- nms[nms == "calibrationID" | nms %in% paste0("c", 0:20) | nms %in% paste0("x", 0:20) | nms %in% paste0('n', 0:20) ]
       tmp <- tmp[, nms, with = FALSE]
       tmp <- suppressWarnings(melt(tmp, id.vars = "calibrationID"))
-      setnames(tmp, c("calibrationID", "key", "value"))
+      if (ncol(tmp) <= 1) {
+        warning('Could not find calibration parameters.  Setting keep_raw and raw to FALSE')
+        keep_raw <- FALSE
+        raw <- FALSE
+      } else {
+        setnames(tmp, c("calibrationID", "key", "value"))
+      }
       self$coefficients <- na.omit(tmp)
     }
     self$channels     <- setDT(dbGetQuery(db, "SELECT * FROM channels"))
@@ -287,16 +293,18 @@ Rsk <- R6Class("Rsk",
   # return a vector of the compensation coefficients (i.e. x0,x1,...)
   comp_coefficients = function() {
 
-    comp_cols <- self$coefficients[key == 'n0']
+    if('key' %in% names(self$coefficients)){
+      comp_cols <- self$coefficients[key == 'n0']
 
-    if(nrow(comp_cols) > 0) {
-      if(comp_cols$value != -1){
+      if(nrow(comp_cols) > 0) {
+        if(comp_cols$value != -1){
 
-        self$pressure_index <- comp_cols$calibrationID
-        self$temperature_index <- comp_cols$value
-        self$is_temperature_compensated <- TRUE
+          self$pressure_index <- comp_cols$calibrationID
+          self$temperature_index <- comp_cols$value
+          self$is_temperature_compensated <- TRUE
 
-        return(self$coefficients[grepl('x', key)]$value)
+          return(self$coefficients[grepl('x', key)]$value)
+        }
       }
     }
 
@@ -366,12 +374,14 @@ Rsk <- R6Class("Rsk",
 
     invisible(self)
   },
+
   to_rdata = function(output = NULL, ...){
     if(is.null(output)) {
       output <- gsub('.rsk', '.rda', self$file_name)
     }
     saveRDS(self, output, ...)
   },
+
   to_csv = function(output = NULL, ...){
 
     if(is.null(output)) {
@@ -379,12 +389,14 @@ Rsk <- R6Class("Rsk",
     }
     fwrite(self$data, output, ...)
   },
+
   to_fst = function(output = NULL, ...){
     if(is.null(output)) {
       output <- gsub('.rsk', '.fst', self$file_name)
     }
     write_fst(self$data, output, ...)
   },
+
   to_duckdb = function(output = NULL){
     if(is.null(output)) {
       output <- gsub('.rsk', '.duckdb', x)
@@ -401,6 +413,7 @@ Rsk <- R6Class("Rsk",
 
     DBI::dbDisconnect(duck_db, shutdown=TRUE)
   },
+
   non_representative = function(raw_head) {
 
     h_len  <- max(which(raw_head == self$time_1))
@@ -480,9 +493,11 @@ Rsk <- R6Class("Rsk",
 # library(rsk)
 # library(RSQLite)
 # library(data.table)
-#
-# file_name <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
-# system.time(z <- Rsk$new(file_name))
+
+
+# file_name <- "/media/jonathankennel/Seagate Expansion Drive/rbr_g360/077753_20211115_1043.rsk"
+# file_name <- paste0("/media/jonathankennel/Seagate Expansion Drive/rbr_g360/", well_fn[8])
+# Rsk$new(well_fn[9], raw = TRUE, keep_raw = TRUE)
 
 
 #
