@@ -15,7 +15,7 @@ to_duckdb(input, output = NULL)
 NULL - copies an .rsk file to .duckdb
 }
 \description{
-convert .rsk to .duckdb database
+convert .rsk to .duckdb database.
 }
 \author{
 Jonathan Kennel \email{jkennel@uoguelph.ca}
