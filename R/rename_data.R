@@ -9,7 +9,8 @@
 #'
 #' @examples
 rename_data <- function(x) {
-  type_desc <- system.file("include/rbr_channels", package="rsk")
+  type_desc <- data.table::fread(
+    system.file("include/rbr_channels", package = "rsk"))
 
   nms <- names(x)
   wh <- nms %in% type_desc$channel_name

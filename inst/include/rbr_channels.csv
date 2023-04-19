@@ -1,5 +1,6 @@
 channel_name, field_name, parameter, units, type
 pres03, pressure, pressure, dbar, primary
+pres20, pressure, pressure, dbar, primary
 pres21, pressure, pressure, dbar, primary
 pres24, pressure, pressure, dbar, primary
 pres25, pressure, pressure, dbar, primary
