@@ -3,6 +3,7 @@
 export()
 export(Rsk)
 export(Rsk_collection)
+export(read_instrument_log)
 export(rename_data)
 export(rsk_generate_sql)
 export(rsk_generate_sql_times)
