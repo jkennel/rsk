@@ -65,12 +65,8 @@ rsk_find_events <- function(x, header_length) {
     .Call('_rsk_rsk_find_events', PACKAGE = 'rsk', x, header_length)
 }
 
-rsk_find_times <- function(x, time_index) {
-    .Call('_rsk_rsk_find_times', PACKAGE = 'rsk', x, time_index)
-}
-
-rsk_incomplete_events <- function(x, n_cols, f5) {
-    .Call('_rsk_rsk_incomplete_events', PACKAGE = 'rsk', x, n_cols, f5)
+rsk_incomplete_events <- function(x, times, n_cols, f5) {
+    .Call('_rsk_rsk_incomplete_events', PACKAGE = 'rsk', x, times, n_cols, f5)
 }
 
 rsk_raw_to_pressure <- function(x, calib) {

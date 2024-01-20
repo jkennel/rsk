@@ -172,7 +172,7 @@ Rsk <- R6Class("Rsk",
 
     # calculate mv, dbar, temperature
     self$data <- setDT(
-      rsk_read_bin(raw_val,
+      rsk:::rsk_read_bin(raw_val,
                    self$is_temperature(),
                    t(self$base_coefficients()),
                    co_compensation,
@@ -297,7 +297,7 @@ Rsk <- R6Class("Rsk",
       comp_cols <- self$coefficients[key == 'n0']
 
       if(nrow(comp_cols) > 0) {
-        if(comp_cols$value != -1){
+        if(comp_cols$value != -1) {
 
           self$pressure_index <- comp_cols$calibrationID
           self$temperature_index <- comp_cols$value

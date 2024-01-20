@@ -54,46 +54,57 @@ Rcpp::NumericMatrix raw_to_unsigned_vec(const Rcpp::RawVector x,
 
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector rsk_find_events(const Rcpp::RawVector x,
+Rcpp::List rsk_find_events(const Rcpp::RawVector x,
                                     const size_t header_length){
 
-  Rcpp::IntegerVector z;
+  Rcpp::IntegerVector time_index;
+  Rcpp::IntegerVector times;
+  int ind;
+  int tm;
 
   for(int i = 3 + header_length; i < x.size(); i = i + 4) {
     switch(x[i]) {
     case 0xF7:
-      z.push_back(i - 3);
-      break;
     case 0xF5:
-      z.push_back(i - 3);
+      tm = ((x[4+i] << 24) | (x[3+i] << 16) | (x[2+i] << 8) | x[1+i] );
+      if(tm > 0){
+        time_index.push_back(i - 3);
+        times.push_back(tm);
+      } else {
+        Rcpp::warning("Times before 2000-01-01 were detected - be careful with data");
+      }
       break;
+      default:
+        break;
     }
   }
-
-  return(z);
-
-}
-
-// [[Rcpp::export]]
-Rcpp::IntegerVector rsk_find_times(const Rcpp::RawVector x,
-                                   const Rcpp::IntegerVector time_index){
-
-  size_t n_times = time_index.length();
-  Rcpp::IntegerVector times(n_times);
-
-  size_t ind;
-
-  for(size_t i = 0; i < n_times; i++) {
-    ind = time_index[i] + 4;
-    times[i] = ((x[3+ind] << 24) | (x[2+ind] << 16) | (x[1+ind] << 8) | x[0+ind] );
-  }
-
-  return(times);
+  Rcpp::List times_list = Rcpp::List::create(Rcpp::Named("time_index") = time_index,
+                                             Rcpp::_["times"] = times);
+  return(times_list);
 
 }
+
+// // [[Rcpp::export]]
+// Rcpp::IntegerVector rsk_find_times(const Rcpp::RawVector x,
+//                                    const Rcpp::IntegerVector time_index){
+//
+//   size_t n_times = time_index.length();
+//   Rcpp::IntegerVector times(n_times);
+//
+//   size_t ind;
+//
+//   for(size_t i = 0; i < n_times; i++) {
+//     ind = time_index[i] + 4;
+//     times[i] = ((x[3+ind] << 24) | (x[2+ind] << 16) | (x[1+ind] << 8) | x[0+ind] );
+//   }
+//
+//   return(times);
+//
+// }
 
 // [[Rcpp::export]]
 Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
+                                          const Rcpp::IntegerVector times,
                                           const size_t n_cols,
                                           const bool f5)
 {
@@ -112,7 +123,8 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
       z.push_back(x[i]);
       z.push_back(x[i] + 4);
 
-      if(f5 & i == 0) {
+
+      if(f5 & (i == 0)) {
         z.push_back(x[i] + 8);
         difference = ((x[i+1] - x[i]) - 12) % (4 * n_cols);
 
@@ -121,7 +133,6 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
       }
       // remove incomplete events
       if(difference != 0) {
-
         for(int j = difference / 4; j > 0; j--) {
           z.push_back(x[i+1] - 4 * j);
         }
@@ -393,9 +404,12 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
     f5 = true;
   }
 
-  Rcpp::IntegerVector time_index = rsk_find_events(x, header_length);
-  Rcpp::IntegerVector times      = rsk_find_times(x, time_index);
-  Rcpp::IntegerVector to_remove  = rsk_incomplete_events(time_index, n_channels, f5);
+  Rcpp::List tms = rsk_find_events(x, header_length);
+  Rcpp::IntegerVector time_index = tms[0];
+  Rcpp::IntegerVector times = tms[1];
+  // Rcpp::IntegerVector times      = rsk_find_times(x, time_index);
+  Rcpp::IntegerVector to_remove  = rsk_incomplete_events(time_index, times, n_channels, f5);
+
   Rcpp::NumericMatrix raw_matrix = raw_to_unsigned_vec(x, header_length, n_channels, to_remove);
 
   Rcpp::DataFrame out_df = Rcpp::DataFrame::create();

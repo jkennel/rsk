@@ -88,11 +88,11 @@ namespace rsk {
         return Rcpp::as<Rcpp::NumericMatrix >(rcpp_result_gen);
     }
 
-    inline Rcpp::IntegerVector rsk_find_events(const Rcpp::RawVector x, const size_t header_length) {
+    inline Rcpp::List rsk_find_events(const Rcpp::RawVector x, const size_t header_length) {
         typedef SEXP(*Ptr_rsk_find_events)(SEXP,SEXP);
         static Ptr_rsk_find_events p_rsk_find_events = NULL;
         if (p_rsk_find_events == NULL) {
-            validateSignature("Rcpp::IntegerVector(*rsk_find_events)(const Rcpp::RawVector,const size_t)");
+            validateSignature("Rcpp::List(*rsk_find_events)(const Rcpp::RawVector,const size_t)");
             p_rsk_find_events = (Ptr_rsk_find_events)R_GetCCallable("rsk", "_rsk_rsk_find_events");
         }
         RObject rcpp_result_gen;
@@ -106,41 +106,20 @@ namespace rsk {
             throw Rcpp::LongjumpException(rcpp_result_gen);
         if (rcpp_result_gen.inherits("try-error"))
             throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Rcpp::IntegerVector >(rcpp_result_gen);
+        return Rcpp::as<Rcpp::List >(rcpp_result_gen);
     }
 
-    inline Rcpp::IntegerVector rsk_find_times(const Rcpp::RawVector x, const Rcpp::IntegerVector time_index) {
-        typedef SEXP(*Ptr_rsk_find_times)(SEXP,SEXP);
-        static Ptr_rsk_find_times p_rsk_find_times = NULL;
-        if (p_rsk_find_times == NULL) {
-            validateSignature("Rcpp::IntegerVector(*rsk_find_times)(const Rcpp::RawVector,const Rcpp::IntegerVector)");
-            p_rsk_find_times = (Ptr_rsk_find_times)R_GetCCallable("rsk", "_rsk_rsk_find_times");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_rsk_find_times(Shield<SEXP>(Rcpp::wrap(x)), Shield<SEXP>(Rcpp::wrap(time_index)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<Rcpp::IntegerVector >(rcpp_result_gen);
-    }
-
-    inline Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x, const size_t n_cols, const bool f5) {
-        typedef SEXP(*Ptr_rsk_incomplete_events)(SEXP,SEXP,SEXP);
+    inline Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x, const Rcpp::IntegerVector times, const size_t n_cols, const bool f5) {
+        typedef SEXP(*Ptr_rsk_incomplete_events)(SEXP,SEXP,SEXP,SEXP);
         static Ptr_rsk_incomplete_events p_rsk_incomplete_events = NULL;
         if (p_rsk_incomplete_events == NULL) {
-            validateSignature("Rcpp::IntegerVector(*rsk_incomplete_events)(const Rcpp::IntegerVector,const size_t,const bool)");
+            validateSignature("Rcpp::IntegerVector(*rsk_incomplete_events)(const Rcpp::IntegerVector,const Rcpp::IntegerVector,const size_t,const bool)");
             p_rsk_incomplete_events = (Ptr_rsk_incomplete_events)R_GetCCallable("rsk", "_rsk_rsk_incomplete_events");
         }
         RObject rcpp_result_gen;
         {
             RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p_rsk_incomplete_events(Shield<SEXP>(Rcpp::wrap(x)), Shield<SEXP>(Rcpp::wrap(n_cols)), Shield<SEXP>(Rcpp::wrap(f5)));
+            rcpp_result_gen = p_rsk_incomplete_events(Shield<SEXP>(Rcpp::wrap(x)), Shield<SEXP>(Rcpp::wrap(times)), Shield<SEXP>(Rcpp::wrap(n_cols)), Shield<SEXP>(Rcpp::wrap(f5)));
         }
         if (rcpp_result_gen.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

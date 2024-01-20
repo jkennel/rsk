@@ -1,4 +1,3 @@
-file_path <- "../../../Downloads/ruskin_instrument.log"
 #' read_instrument_log
 #'
 #' @param file_path the path of the log file "ruskin_instrument.log"
