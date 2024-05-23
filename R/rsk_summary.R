@@ -19,27 +19,27 @@ rsk_summary <- function(file_name) {
 
   db   <- dbConnect(SQLite(), file_name)
 
-  if(.check_for_table(db, 'channels')) {
+  if (.check_for_table(db, 'channels')) {
     channels <- setDT(dbGetQuery(db, "SELECT * FROM channels"))
   } else {
     channels <- NULL
   }
 
-  if(.check_for_table(db, 'instruments')) {
+  if (.check_for_table(db, 'instruments')) {
     instruments  <- setDT(dbGetQuery(db, "SELECT * FROM instruments"))
   } else {
     instruments <- NULL
   }
 
-  if(.check_for_table(db, 'continuous')) {
+  if (.check_for_table(db, 'continuous')) {
     continuous <- setDT(dbGetQuery(db, "SELECT * FROM continuous"))
-  } else if(.check_for_table(db, 'schedules')) {
+  } else if (.check_for_table(db, 'schedules')) {
     continuous <- setDT(dbGetQuery(db, "SELECT * FROM schedules"))
   } else {
     continuous <- NULL
   }
 
-  if(.check_for_table(db, 'data')) {
+  if (.check_for_table(db, 'data')) {
 
     start_id <- paste0("SELECT tstamp/1000 FROM data ORDER BY tstamp LIMIT 1")
     end_id   <- paste0("SELECT tstamp/1000 FROM data ORDER BY tstamp DESC LIMIT 1")

@@ -55,14 +55,14 @@ Rcpp::NumericMatrix raw_to_unsigned_vec(const Rcpp::RawVector x,
 
 // [[Rcpp::export]]
 Rcpp::List rsk_find_events(const Rcpp::RawVector x,
-                                    const size_t header_length){
+                           const size_t header_length){
 
   Rcpp::IntegerVector time_index;
   Rcpp::IntegerVector times;
   int ind;
   int tm;
 
-  for(int i = 3 + header_length; i < x.size(); i = i + 4) {
+  for (int i = 3 + header_length; i < x.size(); i = i + 4) {
     switch(x[i]) {
     case 0xF7:
     case 0xF5:
@@ -74,8 +74,8 @@ Rcpp::List rsk_find_events(const Rcpp::RawVector x,
         Rcpp::warning("Times before 2000-01-01 were detected - be careful with data");
       }
       break;
-      default:
-        break;
+    default:
+      break;
     }
   }
   Rcpp::List times_list = Rcpp::List::create(Rcpp::Named("time_index") = time_index,
@@ -267,13 +267,18 @@ Rcpp::DatetimeVector rsk_raw_times(const Rcpp::IntegerVector raw_tstamp,
                                    const size_t n_columns,
                                    double measurement_interval) {
 
+
+  // if (by != 1) {
+  //   measurement_interval = measurement_interval * by;
+  //   n_times = n_times / by;
+  // }
+
   // output length in
   size_t n_ev = raw_tstamp.length();
 
-
-
   // time index
   Rcpp::IntegerVector index(n_ev);
+
 
   for(size_t i = 0; i < n_ev; i++){
     index[i] = ((raw_index[i] / 4) - i * 2) / n_columns;
@@ -285,7 +290,7 @@ Rcpp::DatetimeVector rsk_raw_times(const Rcpp::IntegerVector raw_tstamp,
   size_t e;
 
 
-  // reference timess
+  // reference times
   double to_add;
   double ref = 946684800.0; // 2000-01-01
 
@@ -296,7 +301,7 @@ Rcpp::DatetimeVector rsk_raw_times(const Rcpp::IntegerVector raw_tstamp,
   Rcpp::NumericVector temp_vec;
 
   if(n_ev == 1) {
-    temp_vec = Rcpp::seq(0, n_times-1); // create integer first then convert
+    temp_vec = Rcpp::seq(0, n_times - 1); // create integer first then convert
     out_times = raw_tstamp[0] + ref + temp_vec * measurement_interval;
   }
 
@@ -308,8 +313,11 @@ Rcpp::DatetimeVector rsk_raw_times(const Rcpp::IntegerVector raw_tstamp,
       e = index[j+1] - index[j];
 
       to_add = raw_tstamp[j] + ref;
-      temp_vec = Rcpp::seq(0, e-1); // create integer first then convert
+      temp_vec = Rcpp::seq(0, e - 1); // create integer first then convert
       temp_vec = to_add + Rcpp::as<Rcpp::NumericVector>(temp_vec) * measurement_interval;
+
+      // subset here if you want to speed things up
+      //
 
       out_times[Rcpp::Range(s, s + e - 1)] = temp_vec;
       s += e;
@@ -400,21 +408,31 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
   // where does the data start
   size_t header_length = get_header_length(x);
 
-  if(x[header_length + 3] == 0xF5) {
+  if (x[header_length + 3] == 0xF5) {
     f5 = true;
   }
 
   Rcpp::List tms = rsk_find_events(x, header_length);
   Rcpp::IntegerVector time_index = tms[0];
   Rcpp::IntegerVector times = tms[1];
+
+  // Rcpp::Rcout << "The size of times : " << times.size() << "\n";
+
   // Rcpp::IntegerVector times      = rsk_find_times(x, time_index);
   Rcpp::IntegerVector to_remove  = rsk_incomplete_events(time_index, times, n_channels, f5);
-
   Rcpp::NumericMatrix raw_matrix = raw_to_unsigned_vec(x, header_length, n_channels, to_remove);
+  // Rcpp::NumericVector tmp = raw_matrix.column(0);
+
+  // Rcpp::Rcout << "The value of cols : " << raw_matrix.cols() << "\n";
+  // Rcpp::Rcout << "The value of rows : " << raw_matrix.rows() << "\n";
+  // Rcpp::Rcout << "The value of raw_matrix : " << tmp << "\n";
+
 
   Rcpp::DataFrame out_df = Rcpp::DataFrame::create();
 
   size_t n_raw = x.length();
+
+  // subset raw_matrix for speed if desired
 
   // time column
   out_df.push_back(rsk_raw_times(times,
@@ -432,13 +450,14 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
   }
 
   // pressure and temperature columns are handled differently
-  for(size_t j = 0; j < n_channels; j++) {
+  for (size_t j = 0; j < n_channels; j++) {
 
     // raw millivolt readings
     if (keep_raw) {
       out_df.push_back(raw_matrix.row(j));
     }
 
+    // convert from raw values to typical units
     // calibrated temperature
     if (is_temp(j)){
       out_df.push_back(rsk_raw_to_temperature(raw_matrix.row(j),
@@ -453,7 +472,7 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
   // Rcpp::Rcout << "The size of time : " << pressure_index << "\n";
 
   // do temperature compensation
-  if(pressure_index != 0 & temperature_index != 0) {
+  if (pressure_index != 0 & temperature_index != 0) {
 
     arma::vec pressure = out_df[pressure_index];
     arma::vec temperature = out_df[temperature_index];
@@ -470,10 +489,11 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
 
 
 /*** R
-# library(data.table)
-# x <- '/home/jonathankennel/Desktop/rd45a 081871_20201026_1223.bin'
-#
-#
+library(data.table)
+x <- '../../transducer/rbr/077615_20141118_1408.rsk'
+a <- Rsk$new(x, raw = TRUE, keep_raw = TRUE)
+a$data
+
 # system.time({
 #   hex_dat <- readBin(x, n = 2e8, what = 'raw')
 #   n   <- setDT(rsk_read_bin(hex_dat,
