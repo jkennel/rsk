@@ -9,7 +9,7 @@
 #'
 #' @examples
 rename_data <- function(x) {
-
+  data(rbr_channels)
   nms <- names(x)
   nms <- intersect(nms, rbr_channels$channel_name)
   nms_dt <- data.table(channel_name = nms)

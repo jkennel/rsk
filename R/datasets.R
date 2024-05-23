@@ -14,6 +14,9 @@
 #' }
 #'
 #' @keywords internal
+#'
+#' @export
+#'
 #' @examples
 #' utils::data(rbr_channels)
 "rbr_channels"
