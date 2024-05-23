@@ -166,7 +166,6 @@ initialize = function(file_name,
               n = 68000,
               what = "raw")
     }))
-    # print(length(raw_val))
 
     # determine non representative values
 
@@ -182,6 +181,12 @@ initialize = function(file_name,
                          keep_raw)
     )
     setnames(self$data, self$names)
+
+    # subset samples
+    if (!is.null(by)) {
+      self$data <- self$data[as.numeric(datetime) %% by == 0]
+    }
+
   } else {
 
     sql_suffix <- rsk_generate_sql_times(start, end, by, times)
