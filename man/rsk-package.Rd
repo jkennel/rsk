@@ -2,8 +2,8 @@
 % Please edit documentation in R/rsk-package.R
 \docType{package}
 \name{rsk-package}
+\alias{rsk}
 \alias{rsk-package}
-\alias{_PACKAGE}
 \title{rsk: A tool to work with pressure and temperature datasets from RBR
 SQLite3 databases}
 \description{
