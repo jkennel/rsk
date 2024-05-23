@@ -390,12 +390,12 @@ to_csv = function(output = NULL, ...){
   fwrite(self$data, output, ...)
 },
 
-to_fst = function(output = NULL, ...){
-  if(is.null(output)) {
-    output <- gsub(".rsk", ".fst", self$file_name)
-  }
-  write_fst(self$data, output, ...)
-},
+# to_fst = function(output = NULL, ...){
+#   if(is.null(output)) {
+#     output <- gsub(".rsk", ".fst", self$file_name)
+#   }
+#   write_fst(self$data, output, ...)
+# },
 
 to_duckdb = function(output = NULL){
   if(is.null(output)) {

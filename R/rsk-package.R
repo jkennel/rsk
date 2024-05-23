@@ -37,8 +37,6 @@
 #'
 #' @importFrom plotly plot_ly
 #'
-#' @importFrom fst write_fst
-#'
 #' @importFrom duckdb duckdb
 #'
 #' @importFrom tools file_ext

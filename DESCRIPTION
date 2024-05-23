@@ -16,7 +16,6 @@ Imports:
   RSQLite,
   duckdb,
   plotly,
-  fst,
   DBI,
   R6
 LinkingTo: Rcpp, 
