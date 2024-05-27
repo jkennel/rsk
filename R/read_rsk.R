@@ -19,7 +19,7 @@ read_rsk <- function(file_name, ...) {
 
   transducer_data <- list()
   for (i in seq_along(file_name)) {
-    transducer_data[[i]] <- Rsk::new(file_name[i], ...)
+    transducer_data[[i]] <- Rsk$new(file_name[i], ...)
   }
 
   return(transducer_data)
