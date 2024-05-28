@@ -1,4 +1,4 @@
-#" @export
+#' @export
 Rsk <- R6Class("Rsk",
                public = list(
 
@@ -48,24 +48,24 @@ Rsk <- R6Class("Rsk",
 
 
 
-#" @description
-#" Class to hold data from an .rsk or .duckdb file
-#"
-#" @param file_name
-#" @param subset
-#" @param latitude
-#" @param longitude
-#" @param elevation
-#" @param start
-#" @param end
-#" @param by
-#" @param times
-#" @param raw
-#"
-#" @return
-#" @export
-#"
-#" @examples
+#' @description
+#' Class to hold data from an .rsk or .duckdb file
+#'
+#' @param file_name
+#' @param subset
+#' @param latitude
+#' @param longitude
+#' @param elevation
+#' @param start
+#' @param end
+#' @param by
+#' @param times
+#' @param raw
+#'
+#' @return
+#' @export
+#'
+#' @examples
 initialize = function(file_name,
                       subset = FALSE,
                       latitude = NULL,
