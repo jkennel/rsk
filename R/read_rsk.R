@@ -46,7 +46,7 @@ read_rsk <- function(file_name,
     data <- data.table::melt(rename_data(transducer_data[[i]][["data"]]),
                             id.vars = "datetime")
     for (j in seq_along(include_params)) {
-      data.table::set(data, j = include_params[j], value = transducer_data[[j]][[include_params[j]]])
+      data.table::set(data, j = include_params[j], value = transducer_data[[i]][[include_params[j]]])
     }
 
     result[[i]] <- data
