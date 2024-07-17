@@ -8,6 +8,9 @@
 #'
 #' @inheritParams read_rbr
 #' @param file_name the *rsk file to read
+#' @param return_data_table return a data.table of results?
+#' @param include_params vector of parameter names contained in *rsk file to
+#'   include in returned data.table.
 #'
 #'
 #' @return table with some information about the rsk file
@@ -15,7 +18,10 @@
 #' @export
 #'
 #===============================================================================
-read_rsk <- function(file_name, ...) {
+read_rsk <- function(file_name,
+                     return_data_table = NULL,
+                     include_params = NULL,
+                     ...) {
 
   transducer_data <- list()
 
@@ -23,7 +29,31 @@ read_rsk <- function(file_name, ...) {
     transducer_data[[i]] <- Rsk$new(file_name[i], ...)
   }
 
-  return(transducer_data)
+  if (is.null(return_data_table)) {
+    return(transducer_data)
+  }
+
+
+  if (is.null(include_params)) {
+    rbindlist(lapply(transducer_data, function(x) {
+      data.table::melt(rename_data(x$data), id.vars = "datetime")
+    }))
+  }
+
+
+  result <- list()
+  for (i in seq_along(transducer_data)) {
+    data <- data.table::melt(rename_data(transducer_data[[i]][["data"]]),
+                            id.vars = "datetime")
+    for (j in seq_along(include_params)) {
+      set(data, j = include_params[i], transducer_data[[i]][[include_params[i]]])
+    }
+
+    result[[i]] <- data
+  }
+
+  return(rbindlist(result))
+
 }
 
 #===============================================================================
