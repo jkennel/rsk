@@ -4,10 +4,15 @@
 \alias{read_rsk}
 \title{read_rsk}
 \usage{
-read_rsk(file_name, ...)
+read_rsk(file_name, return_data_table = NULL, include_params = NULL, ...)
 }
 \arguments{
 \item{file_name}{the *rsk file to read}
+
+\item{return_data_table}{return a data.table of results?}
+
+\item{include_params}{vector of parameter names contained in *rsk file to
+include in returned data.table.}
 }
 \value{
 table with some information about the rsk file
