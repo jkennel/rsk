@@ -49,6 +49,7 @@ read_rsk <- function(file_name,
       set(data, j = include_params[i], value = transducer_data[[i]][[include_params[i]]])
     }
 
+    print(str(data))
     result[[i]] <- data
   }
 
