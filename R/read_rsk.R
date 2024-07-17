@@ -29,7 +29,7 @@ read_rsk <- function(file_name,
     transducer_data[[i]] <- Rsk$new(file_name[i], ...)
   }
 
-  if (is.null(return_data_table)) {
+  if (return_data_table) {
     return(transducer_data)
   }
 
