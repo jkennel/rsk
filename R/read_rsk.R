@@ -11,7 +11,7 @@
 #' @param return_data_table return a data.table of results?
 #' @param include_params vector of parameter names contained in *rsk file to
 #'   include in returned data.table.
-#' @param simplify do you want the final temperature and pressure results only.
+#' @param simplify_names do you want the final temperature and pressure results only.
 #'   only works when return_data_table is TRUE
 #'
 #'
