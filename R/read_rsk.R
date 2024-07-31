@@ -23,7 +23,7 @@
 read_rsk <- function(file_name,
                      return_data_table = FALSE,
                      include_params = NULL,
-                     simplify = TRUE,
+                     simplify_names = TRUE,
                      ...) {
 
   transducer_data <- list()
@@ -50,7 +50,7 @@ read_rsk <- function(file_name,
     data_renamed <- rename_data(transducer_data[[i]][["data"]])
 
     # remove non-final columns
-    if (simplify) {
+    if (simplify_names) {
       nms <- names(data_renamed)
       if ("pressure_compensated" %in% nms) {
         data_renamed[, pressure := NULL]
