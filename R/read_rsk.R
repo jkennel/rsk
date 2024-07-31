@@ -11,7 +11,8 @@
 #' @param return_data_table return a data.table of results?
 #' @param include_params vector of parameter names contained in *rsk file to
 #'   include in returned data.table.
-#' @param simplify do you want the final temperature and pressure results only
+#' @param simplify do you want the final temperature and pressure results only.
+#'   only works when return_data_table is TRUE
 #'
 #'
 #' @return table with some information about the rsk file
@@ -53,12 +54,12 @@ read_rsk <- function(file_name,
       nms <- names(data_renamed)
       if ("pressure_compensated" %in% nms) {
         data_renamed[, pressure := NULL]
-        setnames(data_renamed, "pressure_compensated", "pressure")
+        setnames(data_renamed, "pressure_compensated", "pressure", skip_absent = TRUE)
       }
       if ("temperature" %in% nms & "temperature_onboard" %in% nms) {
         data_renamed[, temperature_onboard := NULL]
       }
-      setnames(data_renamed, "temperature_onboard", "temperature")
+      setnames(data_renamed, "temperature_onboard", "temperature", ,skip_absent = TRUE)
     }
 
     data <- data.table::melt(data_renamed, id.vars = "datetime")
