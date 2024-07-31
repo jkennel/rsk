@@ -4,7 +4,13 @@
 \alias{read_rsk}
 \title{read_rsk}
 \usage{
-read_rsk(file_name, return_data_table = NULL, include_params = NULL, ...)
+read_rsk(
+  file_name,
+  return_data_table = FALSE,
+  include_params = NULL,
+  simplify = TRUE,
+  ...
+)
 }
 \arguments{
 \item{file_name}{the *rsk file to read}
@@ -13,6 +19,8 @@ read_rsk(file_name, return_data_table = NULL, include_params = NULL, ...)
 
 \item{include_params}{vector of parameter names contained in *rsk file to
 include in returned data.table.}
+
+\item{simplify}{do you want the final temperature and pressure results only}
 }
 \value{
 table with some information about the rsk file
