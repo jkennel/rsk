@@ -59,7 +59,7 @@ read_rsk <- function(file_name,
       if ("temperature" %in% nms & "temperature_onboard" %in% nms) {
         data_renamed[, temperature_onboard := NULL]
       }
-      setnames(data_renamed, "temperature_onboard", "temperature", ,skip_absent = TRUE)
+      setnames(data_renamed, "temperature_onboard", "temperature", skip_absent = TRUE)
     }
 
     data <- data.table::melt(data_renamed, id.vars = "datetime")
