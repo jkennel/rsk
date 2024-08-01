@@ -159,13 +159,13 @@ initialize = function(file_name,
 
   if (raw) {
 
-
     # get raw values
     raw_val <- unlist(lapply(self$blob$data, function(x) {
       readBin(x,
               n = 68000,
               what = "raw")
     }))
+
 
     # determine non representative values
 

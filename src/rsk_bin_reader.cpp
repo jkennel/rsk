@@ -39,11 +39,12 @@ Rcpp::NumericMatrix raw_to_unsigned_vec(const Rcpp::RawVector x,
   Rcpp::NumericMatrix out(n_columns, (n_data - to_remove.length() * 4) / (4 * n_columns));
 
   for(size_t i = header_length; i < x.size(); i += 4) {
-    if(i == to_remove[k]) {
-      k += 1;
+    if (k < to_remove.size()) {
+      if(i == to_remove[k]) {
+        k += 1;
+      }
     } else {
-      out[j] = ((x[3+i] << 24) | (x[2+i] << 16) | (x[1+i] << 8) | x[i] ) / 1073741824.0;
-      // out(j) = raw_to_4byte_signed(x, i);
+      out[j] = ((x[3 + i] << 24) | (x[2 + i] << 16) | (x[1 + i] << 8) | x[i] ) / 1073741824.0;
       j += 1;
     }
   }
@@ -62,11 +63,11 @@ Rcpp::List rsk_find_events(const Rcpp::RawVector x,
   int ind;
   int tm;
 
-  for (int i = 3 + header_length; i < x.size(); i = i + 4) {
+  for (int i = 3 + header_length; i < x.size();  i += 4) {
     switch(x[i]) {
     case 0xF7:
     case 0xF5:
-      tm = ((x[4+i] << 24) | (x[3+i] << 16) | (x[2+i] << 8) | x[1+i] );
+      tm = ((x[4 + i] << 24) | (x[3 + i] << 16) | (x[2 + i] << 8) | x[1 + i] );
       if(tm > 0){
         time_index.push_back(i - 3);
         times.push_back(tm);
@@ -84,6 +85,7 @@ Rcpp::List rsk_find_events(const Rcpp::RawVector x,
 
 }
 
+
 // // [[Rcpp::export]]
 // Rcpp::IntegerVector rsk_find_times(const Rcpp::RawVector x,
 //                                    const Rcpp::IntegerVector time_index){
@@ -93,7 +95,7 @@ Rcpp::List rsk_find_events(const Rcpp::RawVector x,
 //
 //   size_t ind;
 //
-//   for(size_t i = 0; i < n_times; i++) {
+//   for(size_t i = 0; i < n_times; ++i) {
 //     ind = time_index[i] + 4;
 //     times[i] = ((x[3+ind] << 24) | (x[2+ind] << 16) | (x[1+ind] << 8) | x[0+ind] );
 //   }
@@ -112,7 +114,7 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
   Rcpp::IntegerVector z;
 
   size_t difference;
-  for( size_t i = 0; i < x.size(); i++) {
+  for( size_t i = 0; i < x.size(); ++i) {
 
     if(i == x.size() - 1) {
 
@@ -280,7 +282,7 @@ Rcpp::DatetimeVector rsk_raw_times(const Rcpp::IntegerVector raw_tstamp,
   Rcpp::IntegerVector index(n_ev);
 
 
-  for(size_t i = 0; i < n_ev; i++){
+  for(size_t i = 0; i < n_ev; ++i){
     index[i] = ((raw_index[i] / 4) - i * 2) / n_columns;
   }
 
@@ -306,7 +308,7 @@ Rcpp::DatetimeVector rsk_raw_times(const Rcpp::IntegerVector raw_tstamp,
   }
 
 
-  for(size_t j = 0; j < n_ev - 1; j++) {
+  for(size_t j = 0; j < n_ev - 1; ++j) {
 
     if(index[j+1] != index[j]) {
 
@@ -408,6 +410,7 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
   // where does the data start
   size_t header_length = get_header_length(x);
 
+
   if (x[header_length + 3] == 0xF5) {
     f5 = true;
   }
@@ -416,14 +419,13 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
   Rcpp::IntegerVector time_index = tms[0];
   Rcpp::IntegerVector times = tms[1];
 
-  // Rcpp::Rcout << "The size of times : " << times.size() << "\n";
 
   // Rcpp::IntegerVector times      = rsk_find_times(x, time_index);
   Rcpp::IntegerVector to_remove  = rsk_incomplete_events(time_index, times, n_channels, f5);
+
   Rcpp::NumericMatrix raw_matrix = raw_to_unsigned_vec(x, header_length, n_channels, to_remove);
   // Rcpp::NumericVector tmp = raw_matrix.column(0);
 
-  // Rcpp::Rcout << "The value of cols : " << raw_matrix.cols() << "\n";
   // Rcpp::Rcout << "The value of rows : " << raw_matrix.rows() << "\n";
   // Rcpp::Rcout << "The value of raw_matrix : " << tmp << "\n";
 
@@ -445,12 +447,12 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
 
   // keep the millivolt readings
   if (keep_raw) {
-    pressure_index = pressure_index * 2;
-    temperature_index = temperature_index * 2;
+    pressure_index = pressure_index * 2.0;
+    temperature_index = temperature_index * 2.0;
   }
 
   // pressure and temperature columns are handled differently
-  for (size_t j = 0; j < n_channels; j++) {
+  for (size_t j = 0; j < n_channels; ++j) {
 
     // raw millivolt readings
     if (keep_raw) {
@@ -462,7 +464,7 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
     if (is_temp(j)){
       out_df.push_back(rsk_raw_to_temperature(raw_matrix.row(j),
                                               base_calib.row(j)));
-      // calibrated pressure
+    // calibrated pressure
     } else {
       out_df.push_back(rsk_raw_to_pressure(raw_matrix.row(j),
                                            base_calib.row(j)));
