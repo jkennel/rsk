@@ -23,7 +23,6 @@
 read_rsk <- function(file_name,
                      return_data_table = FALSE,
                      include_params = NULL,
-                     simplify_names = TRUE,
                      ...) {
 
   transducer_data <- list()
@@ -46,6 +45,7 @@ read_rsk <- function(file_name,
 
   result <- list()
   for (i in seq_along(transducer_data)) {
+
 
     data <- rename_data(transducer_data[[i]][["data"]])
 
