@@ -43,7 +43,10 @@ Rcpp::NumericMatrix raw_to_unsigned_vec(const Rcpp::RawVector x,
 
     // don't let k grow too big
     if (k >= n_remove) {
-      k = n_remove - 1;
+      // k = n_remove - 1;
+      out[j] = ((x[3+i] << 24) | (x[2+i] << 16) | (x[1+i] << 8) | x[i] ) / 1073741824.0;
+      j += 1;
+      continue;
     }
 
     if(i == to_remove[k]) {
