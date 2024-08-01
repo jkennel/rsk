@@ -4,13 +4,7 @@
 \alias{read_rsk}
 \title{read_rsk}
 \usage{
-read_rsk(
-  file_name,
-  return_data_table = FALSE,
-  include_params = NULL,
-  simplify_names = TRUE,
-  ...
-)
+read_rsk(file_name, return_data_table = FALSE, include_params = NULL, ...)
 }
 \arguments{
 \item{file_name}{the *rsk file to read}
