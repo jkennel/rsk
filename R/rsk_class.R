@@ -61,6 +61,7 @@ Rsk <- R6Class("Rsk",
 #' @param by
 #' @param times
 #' @param raw
+#' @param simplify_names
 #'
 #' @return
 #' @export
@@ -76,7 +77,8 @@ initialize = function(file_name,
                       by = NULL,
                       times = NULL,
                       raw = FALSE,
-                      keep_raw = FALSE
+                      keep_raw = FALSE,
+                      simplify_names = FALSE
 ) {
 
   self$file_name <- file_name
@@ -187,6 +189,11 @@ initialize = function(file_name,
       self$data <- self$data[as.numeric(datetime) %% by == 0]
     }
 
+    if (simplify_names) {
+      self$data <- self$rename_data()
+      self$data <- self$simplify_names()
+    }
+
   } else {
 
     sql_suffix <- rsk_generate_sql_times(start, end, by, times)
@@ -211,6 +218,43 @@ initialize = function(file_name,
   invisible(self)
 
 },
+rename_data = function() {
+
+  data(rbr_channels)
+
+  nms <- names(self$data)
+  nms <- intersect(nms, rbr_channels$channel_name)
+  nms_dt <- data.table::data.table(channel_name = nms)
+
+  nms_new <- rbr_channels[nms_dt, on = "channel_name"][["field_name"]]
+
+  setnames(self$data, nms, nms_new)
+
+  invisible(self$data)
+
+},
+simplify_names = function() {
+  # remove non-final columns
+
+  nms <- names(self$data)
+
+  if ("pressure_compensated" %in% nms) {
+    self$data[, pressure := NULL]
+    setnames(self$data, "pressure_compensated", "pressure", skip_absent = TRUE)
+  }
+
+  if ("temperature" %in% nms & "temperature_onboard" %in% nms) {
+    self$data[, temperature_onboard := NULL]
+  }
+  setnames(self$data, "temperature_onboard", "temperature", skip_absent = TRUE)
+
+  wh <- grep("raw", nms)
+  data.table::set(self$data, , wh, NULL)
+
+  self$data
+  # invisible(self$data[, -wh])
+
+},
 update_time_ranges = function() {
 
   self$time_start <- self$data[1]$datetime
@@ -221,7 +265,6 @@ update_time_ranges = function() {
 
   invisible(self)
 },
-
 channel_names = function(keep_raw = FALSE) {
 
   base_name <- tolower(self$channels[["shortName"]])
@@ -251,7 +294,6 @@ channel_names = function(keep_raw = FALSE) {
   invisible(self)
 
 },
-
 channel_units = function() {
 
   units <- rep(NA_character_, length(self$names))

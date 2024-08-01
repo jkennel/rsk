@@ -31,6 +31,7 @@
 #' @importFrom data.table setDT
 #' @importFrom data.table melt
 #' @importFrom data.table fwrite
+#' @importFrom data.table set
 #' @importFrom data.table setkey
 #' @importFrom data.table setkeyv
 #' @importFrom data.table setnames

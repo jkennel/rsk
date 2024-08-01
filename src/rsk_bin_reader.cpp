@@ -44,7 +44,7 @@ Rcpp::NumericMatrix raw_to_unsigned_vec(const Rcpp::RawVector x,
         k += 1;
       }
     } else {
-      out[j] = ((x[3 + i] << 24) | (x[2 + i] << 16) | (x[1 + i] << 8) | x[i] ) / 1073741824.0;
+      out[j] = ((x[3+i] << 24) | (x[2+i] << 16) | (x[1+i] << 8) | x[i] ) / 1073741824.0;
       j += 1;
     }
   }
@@ -60,14 +60,14 @@ Rcpp::List rsk_find_events(const Rcpp::RawVector x,
 
   Rcpp::IntegerVector time_index;
   Rcpp::IntegerVector times;
-  int ind;
+  // int ind;
   int tm;
 
   for (int i = 3 + header_length; i < x.size();  i += 4) {
     switch(x[i]) {
     case 0xF7:
     case 0xF5:
-      tm = ((x[4 + i] << 24) | (x[3 + i] << 16) | (x[2 + i] << 8) | x[1 + i] );
+      tm = ((x[4+i] << 24) | (x[3+i] << 16) | (x[2+i] << 8) | x[1+i] );
       if(tm > 0){
         time_index.push_back(i - 3);
         times.push_back(tm);
@@ -135,7 +135,7 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
       }
       // remove incomplete events
       if(difference != 0) {
-        for(int j = difference / 4; j > 0; j--) {
+        for(int j = difference / 4; j > 0; --j) {
           z.push_back(x[i+1] - 4 * j);
         }
 
@@ -447,8 +447,8 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
 
   // keep the millivolt readings
   if (keep_raw) {
-    pressure_index = pressure_index * 2.0;
-    temperature_index = temperature_index * 2.0;
+    pressure_index = pressure_index * 2;
+    temperature_index = temperature_index * 2;
   }
 
   // pressure and temperature columns are handled differently

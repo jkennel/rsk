@@ -47,22 +47,9 @@ read_rsk <- function(file_name,
   result <- list()
   for (i in seq_along(transducer_data)) {
 
-    data_renamed <- rename_data(transducer_data[[i]][["data"]])
+    data <- rename_data(transducer_data[[i]][["data"]])
 
-    # remove non-final columns
-    if (simplify_names) {
-      nms <- names(data_renamed)
-      if ("pressure_compensated" %in% nms) {
-        data_renamed[, pressure := NULL]
-        setnames(data_renamed, "pressure_compensated", "pressure", skip_absent = TRUE)
-      }
-      if ("temperature" %in% nms & "temperature_onboard" %in% nms) {
-        data_renamed[, temperature_onboard := NULL]
-      }
-      setnames(data_renamed, "temperature_onboard", "temperature", skip_absent = TRUE)
-    }
-
-    data <- data.table::melt(data_renamed, id.vars = "datetime")
+    data <- data.table::melt(data, id.vars = "datetime")
 
     for (j in seq_along(include_params)) {
       data.table::set(data, j = include_params[j], value = transducer_data[[i]][[include_params[j]]])
