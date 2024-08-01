@@ -2,7 +2,6 @@
 
 export(Rsk)
 export(Rsk_collection)
-export(get_rsk_data)
 export(rbr_channels)
 export(read_instrument_log)
 export(read_rsk)

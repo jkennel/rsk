@@ -166,7 +166,7 @@ initialize = function(file_name,
       readBin(x,
               n = 68000,
               what = "raw")
-    }))
+    }), use.names = FALSE, recursive = FALSE)
 
 
     # determine non representative values
@@ -472,7 +472,7 @@ non_representative = function(raw_head) {
     to_rem[[i]] <- (self[["events"]][["sampleIndex"]][i]-3+i) * self$n_chan + h_len + 1:2
   }
 
-  sort(unlist(to_rem))-1
+  sort(unlist(to_rem, use.names = FALSE))-1
 
 
 },
