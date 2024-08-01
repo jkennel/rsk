@@ -2,51 +2,15 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @title rsk_raw_to_pressure
-#'
-#' @param x
-#' @param calib
-#'
-#' @return
-#' @export
-#'
-#' @examples
 NULL
 
 #' @title rsk_raw_to_temperature
-#'
-#' @param x
-#' @param calib
-#'
-#' @return
-#' @export
-#'
-#' @examples
 NULL
 
 #' @title rsk_temperature_correction
-#'
-#' @param pressure
-#' @param temperature
-#' @param x calibration constants
-#'
-#' @return
-#' @export
-#'
-#' @examples
 NULL
 
 #' @title rsk_raw_times
-#'
-#' @param raw_tstamp
-#' @param raw_index
-#' @param n_times
-#' @param n_columns
-#' @param measurement_interval
-#'
-#' @return
-#' @export
-#'
-#' @examples
 NULL
 
 raw_to_4byte_unsigned <- function(x) {

@@ -35,16 +35,22 @@ Rcpp::NumericMatrix raw_to_unsigned_vec(const Rcpp::RawVector x,
   size_t n_data = x.size() - header_length;
   size_t j=0;
   size_t k=0;
+  size_t n_remove = to_remove.size();
 
   Rcpp::NumericMatrix out(n_columns, (n_data - to_remove.length() * 4) / (4 * n_columns));
 
   for(size_t i = header_length; i < x.size(); i += 4) {
-    if (k < to_remove.size()) {
-      if(i == to_remove[k]) {
-        k += 1;
-      }
+
+    // don't let k grow too big
+    if (k >= n_remove) {
+      k = n_remove - 1;
+    }
+
+    if(i == to_remove[k]) {
+      k += 1;
     } else {
       out[j] = ((x[3+i] << 24) | (x[2+i] << 16) | (x[1+i] << 8) | x[i] ) / 1073741824.0;
+      // out(j) = raw_to_4byte_signed(x, i);
       j += 1;
     }
   }
@@ -60,10 +66,10 @@ Rcpp::List rsk_find_events(const Rcpp::RawVector x,
 
   Rcpp::IntegerVector time_index;
   Rcpp::IntegerVector times;
-  // int ind;
+  int ind;
   int tm;
 
-  for (int i = 3 + header_length; i < x.size();  i += 4) {
+  for (int i = 3 + header_length; i < x.size(); i = i += 4) {
     switch(x[i]) {
     case 0xF7:
     case 0xF5:
@@ -84,7 +90,6 @@ Rcpp::List rsk_find_events(const Rcpp::RawVector x,
   return(times_list);
 
 }
-
 
 // // [[Rcpp::export]]
 // Rcpp::IntegerVector rsk_find_times(const Rcpp::RawVector x,
@@ -135,7 +140,7 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
       }
       // remove incomplete events
       if(difference != 0) {
-        for(int j = difference / 4; j > 0; --j) {
+        for(int j = difference / 4; j > 0; j--) {
           z.push_back(x[i+1] - 4 * j);
         }
 
@@ -154,185 +159,185 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
 
 //==============================================================================
 //' @title rsk_raw_to_pressure
-//'
-//' @param x
-//' @param calib
-//'
-//' @return
-//' @export
-//'
-//' @examples
-//==============================================================================
-// [[Rcpp::export]]
-arma::vec rsk_raw_to_pressure(const arma::vec x,
-                              const arma::vec calib) {
+ //'
+ //' @param x
+ //' @param calib
+ //'
+ //' @return
+ //' @export
+ //'
+ //' @examples
+ //==============================================================================
+ // [[Rcpp::export]]
+ arma::vec rsk_raw_to_pressure(const arma::vec x,
+                               const arma::vec calib) {
 
-  return(arma::polyval(arma::reverse(calib), x));
+   return(arma::polyval(arma::reverse(calib), x));
 
-}
+ }
 
 
 //==============================================================================
 //' @title rsk_raw_to_temperature
-//'
-//' @param x
-//' @param calib
-//'
-//' @return
-//' @export
-//'
-//' @examples
-//==============================================================================
-// [[Rcpp::export]]
-arma::vec rsk_raw_to_temperature(const arma::vec x,
-                                 const arma::vec calib) {
+ //'
+ //' @param x
+ //' @param calib
+ //'
+ //' @return
+ //' @export
+ //'
+ //' @examples
+ //==============================================================================
+ // [[Rcpp::export]]
+ arma::vec rsk_raw_to_temperature(const arma::vec x,
+                                  const arma::vec calib) {
 
-  double k_to_c = 273.15;
-  arma::vec z = arma::log(1.0 / x - 1.0);
+   double k_to_c = 273.15;
+   arma::vec z = arma::log(1.0 / x - 1.0);
 
-  z = arma::polyval(arma::reverse(calib), z);
-  z = 1.0 / z - k_to_c;
+   z = arma::polyval(arma::reverse(calib), z);
+   z = 1.0 / z - k_to_c;
 
-  return(z);
+   return(z);
 
-}
+ }
 
 //==============================================================================
 //' @title rsk_temperature_correction
-//'
-//' @param pressure
-//' @param temperature
-//' @param x calibration constants
-//'
-//' @return
-//' @export
-//'
-//' @examples
-//==============================================================================
-// [[Rcpp::export]]
-arma::vec rsk_temperature_correction(arma::vec out,
-                                     arma::vec tcal,
-                                     const arma::vec x) {
+ //'
+ //' @param pressure
+ //' @param temperature
+ //' @param x calibration constants
+ //'
+ //' @return
+ //' @export
+ //'
+ //' @examples
+ //==============================================================================
+ // [[Rcpp::export]]
+ arma::vec rsk_temperature_correction(arma::vec out,
+                                      arma::vec tcal,
+                                      const arma::vec x) {
 
-  // check length - old version had fewer coefficients
-  // x2 is x5
-  // x3 is x0
-  if(x.n_elem == 4) {
+   // check length - old version had fewer coefficients
+   // x2 is x5
+   // x3 is x0
+   if(x.n_elem == 4) {
 
-    tcal = tcal - x(2);
+     tcal = tcal - x(2);
 
-    out = x(3) + (out - x(3) - x(0) * (tcal)) / (1.0 + x(1) * tcal);
+     out = x(3) + (out - x(3) - x(0) * (tcal)) / (1.0 + x(1) * tcal);
 
-  } else {
-    // x0 is the calibration pressure 'Pcal' in dbar,
-    // x1, x2, x3, x4  correspond directly to the constants "Kp1" through "Kp4",
-    // x5 is the calibration temperature "Tcal" in °C,
+   } else {
+     // x0 is the calibration pressure 'Pcal' in dbar,
+     // x1, x2, x3, x4  correspond directly to the constants "Kp1" through "Kp4",
+     // x5 is the calibration temperature "Tcal" in °C,
 
-    tcal = tcal - x(5);
-    out = out - x(0);
+     tcal = tcal - x(5);
+     out = out - x(0);
 
-    arma::uword s = 0;
-    arma::uword e = 3;
+     arma::uword s = 0;
+     arma::uword e = 3;
 
-    arma::vec co = arma::reverse(x.subvec(s, e));
-    co(3) = 0.0;
+     arma::vec co = arma::reverse(x.subvec(s, e));
+     co(3) = 0.0;
 
-    out -= arma::polyval(co, tcal);
+     out -= arma::polyval(co, tcal);
 
-    out = x(0) + out / (1.0 + x(4) * tcal);
+     out = x(0) + out / (1.0 + x(4) * tcal);
 
-  }
+   }
 
-  return(out);
-}
+   return(out);
+ }
 
 
 
 //==============================================================================
 //' @title rsk_raw_times
-//'
-//' @param raw_tstamp
-//' @param raw_index
-//' @param n_times
-//' @param n_columns
-//' @param measurement_interval
-//'
-//' @return
-//' @export
-//'
-//' @examples
-//==============================================================================
-// [[Rcpp::export]]
-Rcpp::DatetimeVector rsk_raw_times(const Rcpp::IntegerVector raw_tstamp,
-                                   const Rcpp::IntegerVector raw_index,
-                                   const size_t n_times,
-                                   const size_t n_columns,
-                                   double measurement_interval) {
+ //'
+ //' @param raw_tstamp
+ //' @param raw_index
+ //' @param n_times
+ //' @param n_columns
+ //' @param measurement_interval
+ //'
+ //' @return
+ //' @export
+ //'
+ //' @examples
+ //==============================================================================
+ // [[Rcpp::export]]
+ Rcpp::DatetimeVector rsk_raw_times(const Rcpp::IntegerVector raw_tstamp,
+                                    const Rcpp::IntegerVector raw_index,
+                                    const size_t n_times,
+                                    const size_t n_columns,
+                                    double measurement_interval) {
 
 
-  // if (by != 1) {
-  //   measurement_interval = measurement_interval * by;
-  //   n_times = n_times / by;
-  // }
+   // if (by != 1) {
+   //   measurement_interval = measurement_interval * by;
+   //   n_times = n_times / by;
+   // }
 
-  // output length in
-  size_t n_ev = raw_tstamp.length();
+   // output length in
+   size_t n_ev = raw_tstamp.length();
 
-  // time index
-  Rcpp::IntegerVector index(n_ev);
-
-
-  for(size_t i = 0; i < n_ev; ++i){
-    index[i] = ((raw_index[i] / 4) - i * 2) / n_columns;
-  }
+   // time index
+   Rcpp::IntegerVector index(n_ev);
 
 
-  // start and end
-  size_t s = 0;
-  size_t e;
+   for(size_t i = 0; i < n_ev; ++i){
+     index[i] = ((raw_index[i] / 4) - i * 2) / n_columns;
+   }
 
 
-  // reference times
-  double to_add;
-  double ref = 946684800.0; // 2000-01-01
+   // start and end
+   size_t s = 0;
+   size_t e;
 
 
-  Rcpp::NumericVector out_times(n_times);
-  out_times.fill(0);
-
-  Rcpp::NumericVector temp_vec;
-
-  if(n_ev == 1) {
-    temp_vec = Rcpp::seq(0, n_times - 1); // create integer first then convert
-    out_times = raw_tstamp[0] + ref + temp_vec * measurement_interval;
-  }
+   // reference times
+   double to_add;
+   double ref = 946684800.0; // 2000-01-01
 
 
-  for(size_t j = 0; j < n_ev - 1; ++j) {
+   Rcpp::NumericVector out_times(n_times);
+   out_times.fill(0);
 
-    if(index[j+1] != index[j]) {
+   Rcpp::NumericVector temp_vec;
 
-      e = index[j+1] - index[j];
+   if(n_ev == 1) {
+     temp_vec = Rcpp::seq(0, n_times - 1); // create integer first then convert
+     out_times = raw_tstamp[0] + ref + temp_vec * measurement_interval;
+   }
 
-      to_add = raw_tstamp[j] + ref;
-      temp_vec = Rcpp::seq(0, e - 1); // create integer first then convert
-      temp_vec = to_add + Rcpp::as<Rcpp::NumericVector>(temp_vec) * measurement_interval;
 
-      // subset here if you want to speed things up
-      //
+   for(size_t j = 0; j < n_ev - 1; ++j) {
 
-      out_times[Rcpp::Range(s, s + e - 1)] = temp_vec;
-      s += e;
+     if(index[j+1] != index[j]) {
 
-    }
+       e = index[j+1] - index[j];
 
-  }
+       to_add = raw_tstamp[j] + ref;
+       temp_vec = Rcpp::seq(0, e - 1); // create integer first then convert
+       temp_vec = to_add + Rcpp::as<Rcpp::NumericVector>(temp_vec) * measurement_interval;
 
-  Rcpp::DatetimeVector dt(out_times);
+       // subset here if you want to speed things up
+       //
 
-  dt.attr("tzone") = "UTC";
-  return(dt);
-}
+       out_times[Rcpp::Range(s, s + e - 1)] = temp_vec;
+       s += e;
+
+     }
+
+   }
+
+   Rcpp::DatetimeVector dt(out_times);
+
+   dt.attr("tzone") = "UTC";
+   return(dt);
+ }
 
 
 // // This needs review
@@ -410,7 +415,6 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
   // where does the data start
   size_t header_length = get_header_length(x);
 
-
   if (x[header_length + 3] == 0xF5) {
     f5 = true;
   }
@@ -419,13 +423,14 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
   Rcpp::IntegerVector time_index = tms[0];
   Rcpp::IntegerVector times = tms[1];
 
+  // Rcpp::Rcout << "The size of times : " << times.size() << "\n";
 
   // Rcpp::IntegerVector times      = rsk_find_times(x, time_index);
   Rcpp::IntegerVector to_remove  = rsk_incomplete_events(time_index, times, n_channels, f5);
-
   Rcpp::NumericMatrix raw_matrix = raw_to_unsigned_vec(x, header_length, n_channels, to_remove);
   // Rcpp::NumericVector tmp = raw_matrix.column(0);
 
+  // Rcpp::Rcout << "The value of cols : " << raw_matrix.cols() << "\n";
   // Rcpp::Rcout << "The value of rows : " << raw_matrix.rows() << "\n";
   // Rcpp::Rcout << "The value of raw_matrix : " << tmp << "\n";
 
@@ -464,7 +469,7 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
     if (is_temp(j)){
       out_df.push_back(rsk_raw_to_temperature(raw_matrix.row(j),
                                               base_calib.row(j)));
-    // calibrated pressure
+      // calibrated pressure
     } else {
       out_df.push_back(rsk_raw_to_pressure(raw_matrix.row(j),
                                            base_calib.row(j)));
