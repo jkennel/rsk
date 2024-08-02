@@ -14,8 +14,7 @@ read_rsk(file_name, return_data_table = FALSE, include_params = NULL, ...)
 \item{include_params}{vector of parameter names contained in *rsk file to
 include in returned data.table.}
 
-\item{simplify_names}{do you want the final temperature and pressure results only.
-only works when return_data_table is TRUE}
+\item{...}{arguments to pass to Rsk$new()}
 }
 \value{
 table with some information about the rsk file

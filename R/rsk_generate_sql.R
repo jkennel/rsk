@@ -6,7 +6,6 @@
 #' @description Generate SQL string
 #'
 #'
-#' @inheritParams read_rbr
 #' @param db the database connection
 #'
 #'
@@ -85,7 +84,6 @@ rsk_generate_sql <- function(db, start = NULL, end = NULL, by = NULL) {
 #'
 #' @description Generate SQL string to filter times
 #'
-#' @inheritParams read_rbr
 #'
 #' @return SQL string for a query
 #'

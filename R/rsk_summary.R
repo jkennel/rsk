@@ -6,8 +6,7 @@
 #' @description Quick summary of an .rsk file
 #'
 #'
-#' @inheritParams read_rbr
-#' @param db the database connection
+#' @param file_name the *.rsk file to read
 #'
 #'
 #' @return table with some information about the rsk file

@@ -28,6 +28,7 @@ NeedsCompilation: yes
 SystemRequirements: C++17
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    oce
 Depends: 
     R (>= 2.10)

@@ -1,5 +1,7 @@
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -19,7 +21,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of rsk is to facilitate fast reading of pressure and temperature RBR files. This package is in development and exploration stage as it is accessing a binary table of the .rsk file and the format may change in the future. If you need a stable reader for RBR files you may find the *oce* package useful.
+The goal of rsk is to facilitate fast reading of pressure and temperature RBR files. This package is in development and exploration stage as it is accessing a binary table of the .rsk file and the format may change in the future. I am not associated with RBR Ltd., and the focus of this package has been on the compact solo and duet devices for pressure and temperature. If you need a more stable reader for RBR files you may find the *oce* package more useful.
 
 Steps:
 
@@ -45,8 +47,8 @@ devtools::install_github("jkennel/rsk")
 ```{r}
 
 library(rsk)
-fn  <- '/home/jonathankennel/Storage/data/rbr/rd45a 081871_20191118_1213.rsk'
-
+library(oce)
+fn = "../../r_scratch/ELR1-R1_Port16_208651_20240626_1035.rsk"
 # this reads in the data
 system.time(rbr_rsk <- Rsk$new(file_name = fn, raw = TRUE))
 system.time(rbr_rsk <- Rsk$new(file_name = fn, raw = FALSE))

@@ -7,7 +7,7 @@
 rsk_summary(file_name)
 }
 \arguments{
-\item{db}{the database connection}
+\item{file_name}{the *.rsk file to read}
 }
 \value{
 table with some information about the rsk file

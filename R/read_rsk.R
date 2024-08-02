@@ -6,13 +6,11 @@
 #' @description read an *.rsk file or collection of *.rsk files
 #'
 #'
-#' @inheritParams read_rbr
 #' @param file_name the *rsk file to read
 #' @param return_data_table return a data.table of results?
 #' @param include_params vector of parameter names contained in *rsk file to
 #'   include in returned data.table.
-#' @param simplify_names do you want the final temperature and pressure results only.
-#'   only works when return_data_table is TRUE
+#' @param ... arguments to pass to Rsk$new()
 #'
 #'
 #' @return table with some information about the rsk file
