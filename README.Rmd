@@ -48,7 +48,7 @@ devtools::install_github("jkennel/rsk")
 
 library(rsk)
 library(oce)
-fn = "../../r_scratch/ELR1-R1_Port16_208651_20240626_1035.rsk"
+fn = "../../r_scratch/c2 081870_20240501_1603.rsk"
 # this reads in the data
 system.time(rbr_rsk <- Rsk$new(file_name = fn, raw = TRUE))
 system.time(rbr_rsk <- Rsk$new(file_name = fn, raw = FALSE))
