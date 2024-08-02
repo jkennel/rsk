@@ -190,8 +190,10 @@ initialize = function(file_name,
     }
 
     if (simplify_names) {
-      self$data <- self$rename_data()
-      self$data <- self$simplify_names()
+      self <- self$rename_data()
+      self <- self$simplify_names()
+    } else if (!keep_raw) {
+      self <- self$rename_data()
     }
 
   } else {
@@ -220,7 +222,6 @@ initialize = function(file_name,
 },
 rename_data = function() {
 
-  data(rbr_channels)
 
   nms <- names(self$data)
   nms <- intersect(nms, rbr_channels$channel_name)
@@ -230,7 +231,7 @@ rename_data = function() {
 
   setnames(self$data, nms, nms_new)
 
-  invisible(self$data)
+  invisible(self)
 
 },
 simplify_names = function() {
@@ -251,8 +252,7 @@ simplify_names = function() {
   wh <- grep("raw", nms)
   data.table::set(self$data, , wh, NULL)
 
-  self$data
-  # invisible(self$data[, -wh])
+  invisible(self)
 
 },
 update_time_ranges = function() {

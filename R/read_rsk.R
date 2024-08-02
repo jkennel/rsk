@@ -38,7 +38,7 @@ read_rsk <- function(file_name,
 
   if (is.null(include_params)) {
     return(rbindlist(lapply(transducer_data, function(x) {
-      data.table::melt(rename_data(x$data), id.vars = "datetime")
+      data.table::melt(x$data, id.vars = "datetime")
     })))
   }
 
@@ -47,9 +47,7 @@ read_rsk <- function(file_name,
   for (i in seq_along(transducer_data)) {
 
 
-    data <- rename_data(transducer_data[[i]][["data"]])
-
-    data <- data.table::melt(data, id.vars = "datetime")
+    data <- data.table::melt(transducer_data[[i]][["data"]], id.vars = "datetime")
 
     for (j in seq_along(include_params)) {
       data.table::set(data, j = include_params[j], value = transducer_data[[i]][[include_params[j]]])
