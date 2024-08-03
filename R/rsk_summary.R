@@ -19,21 +19,21 @@ rsk_summary <- function(file_name) {
   db   <- dbConnect(SQLite(), file_name)
 
   if (.check_for_table(db, 'channels')) {
-    channels <- setDT(dbGetQuery(db, "SELECT * FROM channels"))
+    channels <- collapse::qDT(dbGetQuery(db, "SELECT * FROM channels"))
   } else {
     channels <- NULL
   }
 
   if (.check_for_table(db, 'instruments')) {
-    instruments  <- setDT(dbGetQuery(db, "SELECT * FROM instruments"))
+    instruments  <- collapse::qDT(dbGetQuery(db, "SELECT * FROM instruments"))
   } else {
     instruments <- NULL
   }
 
   if (.check_for_table(db, 'continuous')) {
-    continuous <- setDT(dbGetQuery(db, "SELECT * FROM continuous"))
+    continuous <- collapse::qDT(dbGetQuery(db, "SELECT * FROM continuous"))
   } else if (.check_for_table(db, 'schedules')) {
-    continuous <- setDT(dbGetQuery(db, "SELECT * FROM schedules"))
+    continuous <- collapse::qDT(dbGetQuery(db, "SELECT * FROM schedules"))
   } else {
     continuous <- NULL
   }

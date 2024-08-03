@@ -94,7 +94,7 @@ initialize = function(file_name,
     db <- dbConnect(SQLite(), file_name)
     self$db_tables    <- RSQLite::dbListTables(db)
     if ("downloads" %in% self$db_tables) {
-      self$blob <- setDT(dbGetQuery(db, "SELECT * FROM downloads"))
+      self$blob <- (dbGetQuery(db, "SELECT * FROM downloads"))
     } else {
       if ("data" %in% self$db_tables) {
 
@@ -119,9 +119,9 @@ initialize = function(file_name,
   self$db_tables    <- RSQLite::dbListTables(db)
 
   if ("coefficients" %in% self$db_tables) {
-    self$coefficients <- setDT(dbGetQuery(db, "SELECT calibrationID, key, cast(value as REAL) as value FROM coefficients"))
+    self$coefficients <- collapse::qDT(dbGetQuery(db, "SELECT calibrationID, key, cast(value as REAL) as value FROM coefficients"))
   } else if ("calibrations" %in% self$db_tables) {
-    tmp <- setDT(dbGetQuery(db, "SELECT * FROM calibrations"))
+    tmp <- collapse::qDT(dbGetQuery(db, "SELECT * FROM calibrations"))
     nms <- names(tmp)
     nms <- nms[nms == "calibrationID" | nms %in% paste0("c", 0:20) | nms %in% paste0("x", 0:20) | nms %in% paste0("n", 0:20) ]
     tmp <- tmp[, nms, with = FALSE]
@@ -135,15 +135,15 @@ initialize = function(file_name,
     }
     self$coefficients <- na.omit(tmp)
   }
-  self$channels     <- setDT(dbGetQuery(db, "SELECT * FROM channels"))
-  self$instruments  <- setDT(dbGetQuery(db, "SELECT * FROM instruments"))
-  self$errors       <- setDT(dbGetQuery(db, "SELECT * FROM errors"))
-  self$events       <- setDT(dbGetQuery(db, "SELECT * FROM events"))
+  self$channels     <- collapse::qDT(dbGetQuery(db, "SELECT * FROM channels"))
+  self$instruments  <- collapse::qDT(dbGetQuery(db, "SELECT * FROM instruments"))
+  self$errors       <- collapse::qDT(dbGetQuery(db, "SELECT * FROM errors"))
+  self$events       <- collapse::qDT(dbGetQuery(db, "SELECT * FROM events"))
 
   if ("continuous" %in% self$db_tables) {
-    self$continuous   <- setDT(dbGetQuery(db, "SELECT * FROM continuous"))
+    self$continuous   <- collapse::qDT(dbGetQuery(db, "SELECT * FROM continuous"))
   } else {
-    self$continuous <- setDT(dbGetQuery(db, "SELECT * FROM schedules"))
+    self$continuous <- collapse::qDT(dbGetQuery(db, "SELECT * FROM schedules"))
   }
 
   # simple constants
@@ -172,7 +172,7 @@ initialize = function(file_name,
     # determine non representative values
 
     # calculate mv, dbar, temperature
-    self$data <- setDT(
+    self$data <- collapse::qDT(
       rsk:::rsk_read_bin(raw_val,
                          self$is_temperature(),
                          t(self$base_coefficients()),

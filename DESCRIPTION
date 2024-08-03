@@ -13,6 +13,7 @@ License: GPL-3
 Imports: 
   Rcpp (>= 1.0.5), 
   data.table,
+  collapse,
   RSQLite,
   duckdb,
   plotly,

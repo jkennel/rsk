@@ -49,7 +49,7 @@ rsk_read_data_table <- function(db, sql_text) {
 
   # time is in milliseconds
   # read data into data.table and set key
-  dt <- tryCatch(setDT(dbGetQuery(db, sql_text), key = 'tstamp'), error = function(e) e)
+  dt <- tryCatch(collapse::qDT(dbGetQuery(db, sql_text), key = 'tstamp'), error = function(e) e)
 
   if (inherits(dt, "error")) {
     warning('data table is malformed.')

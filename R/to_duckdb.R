@@ -36,7 +36,7 @@ to_duckdb <- function(input, output = NULL) {
 
   # copy the tables from the .rsk to the .duckdb
   for(i in seq_along(nm_tbls)) {
-    tbl_dat <- setDT(dbGetQuery(db_in, paste0("SELECT * FROM ", nm_tbls[i])))
+    tbl_dat <- collapse::qDT(dbGetQuery(db_in, paste0("SELECT * FROM ", nm_tbls[i])))
 
     if(nm_tbls[i] == 'data') {
       tbl_dat[, tstamp := as.POSIXct(as.numeric(tstamp * 1e-3),

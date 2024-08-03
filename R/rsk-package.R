@@ -38,6 +38,7 @@
 #' @importFrom data.table setnames
 #'
 #' @importFrom plotly plot_ly
+#' @importFrom collapse collapse
 #'
 #' @importFrom duckdb duckdb
 #'
