@@ -16,6 +16,11 @@
 #===============================================================================
 rsk_summary <- function(file_name) {
 
+  data.table::rbindlist(lapply(file_name, rsk_summary_one))
+}
+
+rsk_summary_one <- function(file_name) {
+
   db   <- dbConnect(SQLite(), file_name)
 
   if (.check_for_table(db, 'channels')) {
