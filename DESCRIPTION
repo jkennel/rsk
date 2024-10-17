@@ -18,6 +18,7 @@ Imports:
   duckdb,
   plotly,
   DBI,
+  XML,
   R6
 LinkingTo: Rcpp, 
            RcppArmadillo
