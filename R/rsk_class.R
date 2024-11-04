@@ -4,7 +4,7 @@ Rsk <- R6Class("Rsk",
 
   # database name
   file_name     = NA_character_,
-
+  base_name     = NA_character_,
 
   # tables from rsk
   blob         = NULL,
@@ -82,6 +82,7 @@ initialize = function(file_name,
 ) {
 
   self$file_name <- file_name
+  self$base_name <- basename(file_name)
 
   # cannot keep raw data if you aren"t going from the binary table
   if (!raw) {
