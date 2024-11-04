@@ -8,6 +8,7 @@
 #'
 #' @param file_name the *rsk file to read
 #' @param return_data_table return a data.table of results?
+#' @param simplify_names simplify the final names?
 #' @param include_params vector of parameter names contained in *rsk file to
 #'   include in returned data.table.
 #' @param ... arguments to pass to Rsk$new()
@@ -20,6 +21,7 @@
 #===============================================================================
 read_rsk <- function(file_name,
                      return_data_table = FALSE,
+                     simplify_names = TRUE,
                      include_params = NULL,
                      ...) {
 
@@ -27,7 +29,11 @@ read_rsk <- function(file_name,
 
   for (i in seq_along(file_name)) {
     transducer_data[[i]] <- Rsk$new(file_name[i], ...)
+    if (simplify_names) {
+      transducer_data[[i]]$simplify_names()
+    }
   }
+
 
   if (!return_data_table) {
     return(transducer_data)
