@@ -208,7 +208,9 @@ initialize = function(file_name,
 
 
     self$data <- rsk_read_data_table(db, sql_text)
-    # setnames(self$data, self$channels$shortName, self$names)
+
+    self <- self$rename_data()
+
   }
 
 
@@ -363,62 +365,29 @@ comp_coefficients = function() {
 
 },
 
-glance = function(n_max = 1e5, type = "calculated", exclude_times = NULL) {
+glance = function(n_max = 1e5) {
 
-  # do you exclude times
-  if(is.null(exclude_times)) {
-    do_subset <- FALSE
-  } else {
-    do_subset <- TRUE
-  }
+  self <- self$rename_data()
 
-  # subset columns
-  if(type == "calculated") {
-    subs <- self$names[!grepl("_raw", self$names)]
-  } else if(type == "raw") {
-    subs <- self$names[grepl("_raw", self$names)]
-    subs <- c("datetime", subs)
-  } else {
-    subs <- self$names
-  }
+  nms <- names(self$data)
+  subs <- c("datetime", "temperature_onboard", "temperature", "pressure", "pressure_compensated")
+  subs <- subs[subs %in% nms]
+
   data_sub <- self$data[, subs, with = FALSE]
 
-
-  if(self$n_obs < n_max){
-
-    data_sub <- melt(data_sub, id.vars = "datetime")
-
-    # exclude certain times
-    if(do_subset) {
-      # print("here")
-      data_sub <- data_sub[inrange(datetime, exclude_times$start, exclude_times$end), value := NA_real_]
-    }
-    data_sub <- data_sub[variable != "datetime"]
-    print(plot_ly(data_sub,
-                  x = ~datetime,
-                  y = ~value,
-                  color = ~variable,
-                  type = "scatter",
-                  mode = "lines"))
-  } else {
-
-    data_sub <- self$data[as.integer(seq.int(1, .N, length.out = n_max)), subs, with = FALSE]
-    data_sub <- melt(data_sub, id.vars = "datetime")
-
-    # exclude certain times
-    if(do_subset) {
-      # print("here")
-      data_sub <- data_sub[inrange(datetime, exclude_times$start, exclude_times$end), value := NA_real_]
-    }
-    data_sub <- data_sub[variable != "datetime"]
-    print(plot_ly(data_sub,
-                  x = ~datetime,
-                  y = ~value,
-                  color = ~variable,
-                  type = "scatter",
-                  mode = "lines"))
-
+  if(self$n_obs > n_max) {
+    data_sub <- self$data[as.integer(seq.int(1L, .N, length.out = n_max)), subs, with = FALSE]
   }
+
+  data_sub <- melt(data_sub, id.vars = "datetime")
+
+  data_sub <- data_sub[variable != "datetime"]
+  print(plot_ly(data_sub,
+                x = ~datetime,
+                y = ~value,
+                color = ~variable,
+                type = "scatter",
+                mode = "lines"))
 
   invisible(self)
 },
