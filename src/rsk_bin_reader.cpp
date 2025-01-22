@@ -482,7 +482,7 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
   // Rcpp::Rcout << "The size of time : " << pressure_index << "\n";
 
   // do temperature compensation
-  if (pressure_index != 0 & temperature_index != 0) {
+  if ((pressure_index != 0) & (temperature_index != 0)) {
 
     arma::vec pressure = out_df[pressure_index];
     arma::vec temperature = out_df[temperature_index];
