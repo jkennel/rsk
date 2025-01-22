@@ -33,8 +33,8 @@ Rcpp::NumericMatrix raw_to_unsigned_vec(const Rcpp::RawVector x,
                                         const Rcpp::IntegerVector to_remove) {
 
   size_t n_data = x.size() - header_length;
-  size_t j=0;
-  size_t k=0;
+  size_t j = 0;
+  size_t k = 0;
   size_t n_remove = to_remove.size();
 
   Rcpp::NumericMatrix out(n_columns, (n_data - to_remove.length() * 4) / (4 * n_columns));
@@ -49,7 +49,7 @@ Rcpp::NumericMatrix raw_to_unsigned_vec(const Rcpp::RawVector x,
       continue;
     }
 
-    if(i == to_remove[k]) {
+    if (i == to_remove[k]) {
       k += 1;
     } else {
       out[j] = ((x[3+i] << 24) | (x[2+i] << 16) | (x[1+i] << 8) | x[i] ) / 1073741824.0;
@@ -69,15 +69,14 @@ Rcpp::List rsk_find_events(const Rcpp::RawVector x,
 
   Rcpp::IntegerVector time_index;
   Rcpp::IntegerVector times;
-  int ind;
   int tm;
 
-  for (int i = 3 + header_length; i < x.size(); i = i += 4) {
+  for (int i = 3 + header_length; i < x.size(); i += 4) {
     switch(x[i]) {
     case 0xF7:
     case 0xF5:
       tm = ((x[4+i] << 24) | (x[3+i] << 16) | (x[2+i] << 8) | x[1+i] );
-      if(tm > 0){
+      if (tm > 0){
         time_index.push_back(i - 3);
         times.push_back(tm);
       } else {
@@ -122,7 +121,8 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
   Rcpp::IntegerVector z;
 
   size_t difference;
-  for( size_t i = 0; i < x.size(); ++i) {
+
+  for (size_t i = 0; i < x.size(); ++i) {
 
     if(i == x.size() - 1) {
 
@@ -134,7 +134,7 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
       z.push_back(x[i] + 4);
 
 
-      if(f5 & (i == 0)) {
+      if (f5 & (i == 0)) {
         z.push_back(x[i] + 8);
         difference = ((x[i+1] - x[i]) - 12) % (4 * n_cols);
 
@@ -142,8 +142,8 @@ Rcpp::IntegerVector rsk_incomplete_events(const Rcpp::IntegerVector x,
         difference = ((x[i+1] - x[i]) - 8) % (4 * n_cols);
       }
       // remove incomplete events
-      if(difference != 0) {
-        for(int j = difference / 4; j > 0; j--) {
+      if (difference != 0) {
+        for (int j = difference / 4; j > 0; --j) {
           z.push_back(x[i+1] - 4 * j);
         }
 
@@ -440,7 +440,7 @@ Rcpp::DataFrame rsk_read_bin(Rcpp::RawVector x,
 
   Rcpp::DataFrame out_df = Rcpp::DataFrame::create();
 
-  size_t n_raw = x.length();
+  // size_t n_raw = x.length();
 
   // subset raw_matrix for speed if desired
 
