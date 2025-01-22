@@ -89,8 +89,7 @@ initialize = function(file_name,
     keep_raw <- FALSE
   }
 
-
-  # get data base tables
+  # get database tables
   if (tools::file_ext(file_name) == "rsk") {
     db <- dbConnect(SQLite(), file_name)
     self$db_tables    <- RSQLite::dbListTables(db)
@@ -117,7 +116,7 @@ initialize = function(file_name,
     dbDisconnect(db)
     stop("File type not currently supported")
   }
-  self$db_tables    <- RSQLite::dbListTables(db)
+  self$db_tables <- RSQLite::dbListTables(db)
 
   if ("coefficients" %in% self$db_tables) {
     self$coefficients <- collapse::qDT(dbGetQuery(db, "SELECT calibrationID, key, cast(value as REAL) as value FROM coefficients"))
@@ -201,11 +200,12 @@ initialize = function(file_name,
 
     sql_suffix <- rsk_generate_sql_times(start, end, by, times)
     if(sql_suffix != "") {
-      sql_text <- paste0(rsk_generate_sql(db, start=NULL, end=NULL, by=NULL),
+      sql_text <- paste0(rsk_generate_sql(db, start = NULL, end = NULL, by=NULL),
                          sql_suffix)
     } else {
       sql_text <- rsk_generate_sql(db, start, end, by)
     }
+
 
     self$data <- rsk_read_data_table(db, sql_text)
     # setnames(self$data, self$channels$shortName, self$names)

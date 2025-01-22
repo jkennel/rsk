@@ -22,22 +22,21 @@ rsk_read_data_table <- function(db, sql_text) {
   # connect to sqlite database
   nm_tbl <- dbListTables(db)
 
-
-  if(!'data' %in% nm_tbl) {
+  if(!"data" %in% nm_tbl) {
 
     return(data.table(channel = NA,
                       data = list(data.table(value = NA_real_,
-                                             datetime = as.POSIXct(NA_real_, origin = '1970-01-01')))))
+                                             datetime = as.POSIXct(NA_real_, origin = "1970-01-01")))))
   }
 
   # get column names
-  if (!any(grepl('channels', nm_tbl))) {
+  if (!any(grepl("channels", nm_tbl))) {
     warning('missing table called "channels".  Check .rsk file.')
     return(data.table(channel = NA,
                       data = list(data.table(value = NA_real_,
-                                             datetime = as.POSIXct(NA_real_, origin = '1970-01-01')))))
+                                             datetime = as.POSIXct(NA_real_, origin = "1970-01-01")))))
   } else {
-    channels <- unique(dbGetQuery(db, 'SELECT shortName FROM channels')[[1]])
+    channels <- unique(dbGetQuery(db, "SELECT shortName FROM channels")[[1]])
   }
 
   # check if any data is present
@@ -49,7 +48,9 @@ rsk_read_data_table <- function(db, sql_text) {
 
   # time is in milliseconds
   # read data into data.table and set key
-  dt <- tryCatch(collapse::qDT(dbGetQuery(db, sql_text), key = 'tstamp'), error = function(e) e)
+
+  dt <- tryCatch(data.table::setDT(dbGetQuery(db, sql_text), key = "tstamp"), error = function(e) e)
+
 
   if (inherits(dt, "error")) {
     warning('data table is malformed.')
