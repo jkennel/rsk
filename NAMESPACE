@@ -2,8 +2,10 @@
 
 export(Rsk)
 export(Rsk_collection)
+export(adjust_over_time_period)
 export(rbr_channels)
 export(read_instrument_log)
+export(read_levelogger)
 export(read_rsk)
 export(rename_data)
 export(rsk_generate_sql)
