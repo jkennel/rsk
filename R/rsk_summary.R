@@ -16,7 +16,7 @@
 #===============================================================================
 rsk_summary <- function(file_name) {
   dat <- lapply(file_name, rsk_summary_one)
-  # dat <- dat[!which(sapply(dat, nrow) < 9)]
+  # dat <- dat[!which(sapply(dat, ncol) < 9)]
   data.table::rbindlist(dat, fill = TRUE)
 }
 
