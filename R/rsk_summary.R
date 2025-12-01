@@ -15,15 +15,15 @@
 #'
 #===============================================================================
 rsk_summary <- function(file_name) {
-
-  data.table::rbindlist(lapply(file_name, rsk_summary_one))
+  dat <- lapply(file_name, rsk_summary_one)
+  # dat <- dat[!which(sapply(dat, nrow) < 9)]
+  data.table::rbindlist(dat, fill = TRUE)
 }
 
 summary_rsk <- rsk_summary
 
 rsk_summary_one <- function(file_name) {
-
-  db   <- dbConnect(SQLite(), file_name)
+  db <- dbConnect(SQLite(), file_name)
 
   if (.check_for_table(db, 'channels')) {
     channels <- collapse::qDT(dbGetQuery(db, "SELECT * FROM channels"))
@@ -32,7 +32,7 @@ rsk_summary_one <- function(file_name) {
   }
 
   if (.check_for_table(db, 'instruments')) {
-    instruments  <- collapse::qDT(dbGetQuery(db, "SELECT * FROM instruments"))
+    instruments <- collapse::qDT(dbGetQuery(db, "SELECT * FROM instruments"))
   } else {
     instruments <- NULL
   }
@@ -46,38 +46,42 @@ rsk_summary_one <- function(file_name) {
   }
 
   if (.check_for_table(db, 'data')) {
-
     start_id <- paste0("SELECT tstamp/1000 FROM data ORDER BY tstamp LIMIT 1")
-    end_id   <- paste0("SELECT tstamp/1000 FROM data ORDER BY tstamp DESC LIMIT 1")
-    start_id <- as.POSIXct(as.numeric(RSQLite::dbGetQuery(db, start_id)$tstamp),
-                           origin = '1970-01-01',
-                           tz = 'UTC')
-    end_id   <- as.POSIXct(as.numeric(RSQLite::dbGetQuery(db, end_id)$tstamp),
-                           origin = '1970-01-01',
-                           tz = 'UTC')
+    end_id <- paste0(
+      "SELECT tstamp/1000 FROM data ORDER BY tstamp DESC LIMIT 1"
+    )
+    start_id <- as.POSIXct(
+      as.numeric(RSQLite::dbGetQuery(db, start_id)$tstamp),
+      origin = '1970-01-01',
+      tz = 'UTC'
+    )
+    end_id <- as.POSIXct(
+      as.numeric(RSQLite::dbGetQuery(db, end_id)$tstamp),
+      origin = '1970-01-01',
+      tz = 'UTC'
+    )
     # count    <- paste0("SELECT COUNT(tstamp) FROM data")
     # count    <- RSQLite::dbGetQuery(db, count)[[1]]
   } else {
     start_id <- NULL
-    end_id   <- NULL
+    end_id <- NULL
   }
 
   dbDisconnect(db)
 
-
   return(
-    data.table::data.table(file_path = file_name,
-                         file_name = basename(file_name),
-                         file_size = file.size(file_name),
-                         serial = instruments[["serialID"]],
-                         model = instruments[["model"]],
-                         start_id,
-                         end_id,
-                         # n_records = count,
-                         n_channels = nrow(channels),
-                         measurement_interval = continuous[["samplingPeriod"]] / 1000
-                         )
-
+    data.table::data.table(
+      file_path = file_name,
+      file_name = basename(file_name),
+      file_size = file.size(file_name),
+      serial = instruments[["serialID"]],
+      model = instruments[["model"]],
+      start_id,
+      end_id,
+      # n_records = count,
+      n_channels = nrow(channels),
+      measurement_interval = continuous[["samplingPeriod"]] / 1000
+    )
   )
 }
 
@@ -85,9 +89,7 @@ rsk_summary_one <- function(file_name) {
 .check_for_table <- function(db, tbl_name) {
   tbls <- RSQLite::dbListTables(db)
   tbl_name %in% tbls
-
 }
-
 
 # fn <- list.files('/media/jonathankennel/Seagate Expansion Drive/rbr_g360', full.names = TRUE)
 # tmp <- list()
