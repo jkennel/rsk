@@ -22,6 +22,7 @@ temp07, temperature, temperature, degrees_c, primary
 temp09, temperature, temperature, degrees_c, primary
 temp12, temperature, temperature, degrees_c, primary
 temp14, temperature, temperature, degrees_c, primary
+temp18, temperature, temperature, degrees_c, primary
 temp19, temperature, temperature, degrees_c, primary
 temp22, temperature, temperature, degrees_c, primary
 temp26, temperature, temperature, degrees_c, primary

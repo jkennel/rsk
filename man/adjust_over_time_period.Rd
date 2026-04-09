@@ -4,7 +4,7 @@
 \alias{adjust_over_time_period}
 \title{adjust_over_time_period}
 \usage{
-adjust_over_time_period(x, start, end, id = NULL)
+adjust_over_time_period(x, start, end, baro_file_name = NULL)
 }
 \arguments{
 \item{x}{data.table with values column to adjust}
