@@ -24,5 +24,5 @@
 # rbr_channels <- data.table::fread(
 #   system.file("include/rbr_channels.csv", package = "rsk"))
 # usethis::use_data(rbr_channels,
-#                   internal = FALSE,
+#                   internal = TRUE,
 #                   overwrite = TRUE)
